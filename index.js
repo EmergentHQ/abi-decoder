@@ -163,7 +163,7 @@ class AbiDecoder {
   
         return {
           name: method.name,
-          events: decodedParams,
+          params: decodedParams,
           address: logItem.address,
         };
       }

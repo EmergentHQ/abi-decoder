@@ -96,12 +96,12 @@ class AbiDecoder {
     }
   }
 
-  decodeLogs(logs) {
-    return logs.filter(log => log.topics.length > 0).map((logItem) => {
-      const methodID = logItem.topics[0].slice(2);
+  decodeLog(log) {
+    if (log.topics.length > 0) {
+      const methodID = log.topics[0].slice(2);
       const method = this.state.methodIDs[methodID];
       if (method) {
-        const logData = logItem.data;
+        const logData = log.data;
         let decodedParams = [];
         let dataIndex = 0;
         let topicsIndex = 1;
@@ -126,7 +126,7 @@ class AbiDecoder {
           };
   
           if (param.indexed) {
-            decodedP.value = logItem.topics[topicsIndex];
+            decodedP.value = log.topics[topicsIndex];
             topicsIndex++;
           } else {
             decodedP.value = decodedData[dataIndex];
@@ -164,9 +164,15 @@ class AbiDecoder {
         return {
           name: method.name,
           params: decodedParams,
-          address: logItem.address,
+          address: log.address,
         };
       }
+    }
+  }
+
+  decodeLogs(logs) {
+    return logs.filter(log => log.topics.length > 0).map((log) => {
+      return this.decodeLog(log);
     });
   }
 

@@ -88,7 +88,7 @@ class AbiDecoder {
   
       retData.params = this._formatReturnData(abiItem.inputs, abiCoder.decodeParameters(abiItem.inputs, inputData.slice(10)));
   
-      if (abiItem.outputs && outputData) {
+      if (abiItem.outputs && outputData && outputData !== '0x') { // Add 0x check as a hack because some ERC20 tokens return a bool and some don't
         retData.outputs = this._formatReturnData(abiItem.outputs, abiCoder.decodeParameters(abiItem.outputs, outputData), retData.outputs);
       }
   

@@ -1,14 +1,16 @@
 import { AbiCoder } from 'web3-eth-abi';
 import { sha3 } from 'web3-utils';
 import BN from 'bn.js';
-import { ABI, DecodedMethod, DecodedMethodParam, LogItem } from './types';
+import { DecodedMethod, DecodedMethodParam } from './types';
+import { Log } from 'web3-core';
+import { AbiItem, AbiInput, AbiOutput } from 'web3-utils';
 
 export class AbiDecoder {
   private abiCoder: AbiCoder;
 
   private state: {
-    savedABIs: ABI.Item[],
-    methodIDs: { [signature: string]: ABI.Item }
+    savedABIs: AbiItem[],
+    methodIDs: { [signature: string]: AbiItem }
   };
 
   constructor() {
@@ -24,7 +26,7 @@ export class AbiDecoder {
     return this.state.savedABIs;
   }
 
-  addABI(abiArray: ABI.Item[]) {
+  addABI(abiArray: AbiItem[]) {
     if (Array.isArray(abiArray)) {
       // Iterate new abi to generate method id"s
       abiArray.map((abi) => {
@@ -53,7 +55,7 @@ export class AbiDecoder {
     }
   }
 
-  removeABI(abiArray: ABI.Item[]) {
+  removeABI(abiArray: AbiItem[]) {
     if (Array.isArray(abiArray)) {
       // Iterate new abi to generate method id"s
       abiArray.map((abi) => {
@@ -118,7 +120,7 @@ export class AbiDecoder {
     }
   }
 
-  decodeLog(log: LogItem) {
+  decodeLog(log: Log) {
     if (log.topics.length > 0) {
       const methodID = log.topics[0].slice(2);
       const method = this.state.methodIDs[methodID];
@@ -196,20 +198,20 @@ export class AbiDecoder {
     }
   }
 
-  decodeLogs(logs: LogItem[]) {
+  decodeLogs(logs: Log[]) {
     return logs.filter(log => log.topics.length > 0).map((log) => {
       return this.decodeLog(log);
     });
   }
 
-  _typeToString(input: ABI.Input): string {
+  _typeToString(input: AbiInput): string {
     if (input.type === "tuple") {
       return "(" + (input.components || []).map((input) => this._typeToString(input)).join(",") + ")";
     }
     return input.type;
   }
   
-  _formatReturnData(types: ABI.Input[] | ABI.Output[], decoded: any) {
+  _formatReturnData(types: AbiInput[] | AbiOutput[], decoded: any) {
     const returnArray = [];
     for (let i = 0; i < decoded.__length__; i++) {
       let param = decoded[i];

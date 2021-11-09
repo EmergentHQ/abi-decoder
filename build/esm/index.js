@@ -1,7 +1,7 @@
 import { AbiCoder } from 'web3-eth-abi';
 import { sha3 } from 'web3-utils';
 import BN from 'bn.js';
-class AbiDecoder {
+export class AbiDecoder {
     constructor() {
         this.abiCoder = new AbiCoder();
         this.state = {
@@ -200,4 +200,3 @@ class AbiDecoder {
         return returnArray;
     }
 }
-module.exports = AbiDecoder;

@@ -3,7 +3,7 @@ import { sha3 } from 'web3-utils';
 import BN from 'bn.js';
 import { ABI, DecodedMethod, DecodedMethodParam, LogItem } from './types';
 
-class AbiDecoder {
+export class AbiDecoder {
   private abiCoder: AbiCoder;
 
   private state: {
@@ -248,5 +248,3 @@ class AbiDecoder {
     return returnArray;
   }
 }
-
-module.exports = AbiDecoder;

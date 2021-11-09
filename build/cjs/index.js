@@ -4,12 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AbiDecoder = void 0;
-const web3_eth_abi_1 = require("web3-eth-abi");
+const abiCoder = require('web3-eth-abi');
 const web3_utils_1 = require("web3-utils");
 const bn_js_1 = __importDefault(require("bn.js"));
 class AbiDecoder {
     constructor() {
-        this.abiCoder = new web3_eth_abi_1.AbiCoder();
         this.state = {
             savedABIs: [],
             methodIDs: {},
@@ -91,9 +90,9 @@ class AbiDecoder {
                 name: abiItem.name,
                 params: [],
             };
-            retData.params = this._formatReturnData(abiItem.inputs || [], this.abiCoder.decodeParameters(abiItem.inputs || [], inputData.slice(10)));
+            retData.params = this._formatReturnData(abiItem.inputs || [], abiCoder.decodeParameters(abiItem.inputs || [], inputData.slice(10)));
             if (abiItem.outputs && outputData && outputData !== '0x') { // Add 0x check as a hack because some ERC20 tokens return a bool and some don't
-                retData.outputs = this._formatReturnData(abiItem.outputs, this.abiCoder.decodeParameters(abiItem.outputs, outputData));
+                retData.outputs = this._formatReturnData(abiItem.outputs, abiCoder.decodeParameters(abiItem.outputs, outputData));
             }
             return retData;
         }
@@ -113,7 +112,7 @@ class AbiDecoder {
                         dataTypes.push(input.type);
                     }
                 });
-                const decodedData = this.abiCoder.decodeParameters(dataTypes, logData.slice(2));
+                const decodedData = abiCoder.decodeParameters(dataTypes, logData.slice(2));
                 // Loop topic and data to get the params
                 (method.inputs || []).map((param) => {
                     let decodedP = {

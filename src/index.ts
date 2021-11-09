@@ -1,4 +1,4 @@
-import { AbiCoder } from 'web3-eth-abi';
+const abiCoder = require('web3-eth-abi')
 import { sha3 } from 'web3-utils';
 import BN from 'bn.js';
 import { DecodedMethod, DecodedMethodParam } from './types';
@@ -6,16 +6,12 @@ import { Log } from 'web3-core';
 import { AbiItem, AbiInput, AbiOutput } from 'web3-utils';
 
 export class AbiDecoder {
-  private abiCoder: AbiCoder;
-
   private state: {
     savedABIs: AbiItem[],
     methodIDs: { [signature: string]: AbiItem }
   };
 
   constructor() {
-    this.abiCoder = new AbiCoder();
-
     this.state = {
       savedABIs: [],
       methodIDs: {},
@@ -110,10 +106,10 @@ export class AbiDecoder {
         params: [],
       };
   
-      retData.params = this._formatReturnData(abiItem.inputs || [], this.abiCoder.decodeParameters(abiItem.inputs || [], inputData.slice(10)));
+      retData.params = this._formatReturnData(abiItem.inputs || [], abiCoder.decodeParameters(abiItem.inputs || [], inputData.slice(10)));
   
       if (abiItem.outputs && outputData && outputData !== '0x') { // Add 0x check as a hack because some ERC20 tokens return a bool and some don't
-        retData.outputs = this._formatReturnData(abiItem.outputs, this.abiCoder.decodeParameters(abiItem.outputs, outputData));
+        retData.outputs = this._formatReturnData(abiItem.outputs, abiCoder.decodeParameters(abiItem.outputs, outputData));
       }
   
       return retData;
@@ -137,7 +133,7 @@ export class AbiDecoder {
           }
         });
   
-        const decodedData = this.abiCoder.decodeParameters(
+        const decodedData = abiCoder.decodeParameters(
           dataTypes,
           logData.slice(2)
         );

@@ -2,7 +2,6 @@ import { DecodedMethod, DecodedMethodParam } from './types';
 import { Log } from 'web3-core';
 import { AbiItem, AbiInput, AbiOutput } from 'web3-utils';
 export declare class AbiDecoder {
-    private abiCoder;
     private state;
     constructor();
     getABIs(): AbiItem[];
